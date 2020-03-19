@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
+//import { Link } from 'react-router-dom';
 //import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 
@@ -7,17 +7,13 @@ const Course = props => (
     <tr>
         <td>{props.course.course_code}</td>
         <td>{props.course.course_name}</td>
-        <td>{props.course.section}</td>
+        <td>{props.course.my_section}</td>
         <td>{props.course.semester}</td>
-        {localStorage.studenttoken ?  
-            (<td>
-                <Link to={"/showClass/"+props.course.course_code}>List Students</Link> 
-            </td>)
-        : null}
+       
     </tr>
 )
 
-class DisplayCourses extends Component {
+class StudentCourseList extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -26,9 +22,10 @@ class DisplayCourses extends Component {
     }
 
     componentDidMount() {
-        //console.log("DisplayCourses");
-        axios.get('http://localhost:5000/courses/courses')
+
+        axios.get('http://localhost:5000/students/'+ + this.props.match.params.student_number+'/courses')
             .then(res => {
+                console.log(res.data.courses);
                 this.setState({courses: res.data.courses});
             }).catch(function (error) {
                 console.log(error);
@@ -45,7 +42,7 @@ class DisplayCourses extends Component {
             <div className="container">
                 <div className="jumbotron mt-5">
                     <div className="col-sm-8 mx-auto">
-                        <h1 className="text-center">List all courses</h1>
+                        <h1 className="text-center">List all courses taken by student: {this.props.match.params.student_number}</h1>
                     </div>
                     <table className="table col-md-6 mx-auto">
                         <thead>
@@ -66,4 +63,4 @@ class DisplayCourses extends Component {
     }
 }
 
-export default DisplayCourses
+export default StudentCourseList

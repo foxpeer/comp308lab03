@@ -4,8 +4,10 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+const ChosenCourse = require('../models/ChosenCourse');
 const Student = require('../models/Student');
 students.use(cors());
+
 
 process.env.SECRET_KEY = 'password';
 
@@ -109,6 +111,30 @@ students.get('/profile', (req, res) => {
     })
 })
 
+
+students.get('/', (req, res) => {
+    //var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY);
+    console.log("getting student list");
+    Student.find()
+        .then( documents => {
+            res.status(200).json({
+                students: documents
+            })
+        });
+})
+
+students.get('/:student_number/courses/', (req, res) => {
+    console.log("getting student course List");
+    console.log("student_number = " + req.params);
+    ChosenCourse.find({
+        student_number: req.params.student_number
+    }).then( cCourses => {
+        console.log(cCourses);
+        res.status(200).json({
+            courses: cCourses
+        });
+    });
+})
 
 const ConsoleLog = ({ children }) => {
     console.log(children);
